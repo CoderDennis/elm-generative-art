@@ -1,8 +1,9 @@
 module Main exposing (..)
 
 import Html exposing (Html)
-import Svg exposing (Svg, svg, g, line)
+import Svg exposing (Svg, svg, g)
 import Svg.Attributes as Attributes
+import Draw exposing (..)
 
 
 type alias Model =
@@ -30,20 +31,9 @@ view model =
         ]
         [ g
             [ Attributes.transform "translate(50,50)" ]
-            [ viewLine 0 0 1000 0
+            [ line 0 0 1000 0
             ]
         ]
-
-
-viewLine : Float -> Float -> Float -> Float -> Svg Msg
-viewLine x1 y1 x2 y2 =
-    line
-        [ Attributes.x1 <| toString x1
-        , Attributes.y1 <| toString y1
-        , Attributes.x2 <| toString x2
-        , Attributes.y2 <| toString y2
-        ]
-        []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
