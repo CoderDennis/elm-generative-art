@@ -7,7 +7,9 @@ import Draw exposing (..)
 
 
 type alias Model =
-    {}
+    { width : Float
+    , height : Float
+    }
 
 
 type Msg
@@ -16,13 +18,21 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { width = 1000
+      , height = 1000
+      }
+    , Cmd.none
+    )
 
 
 view : Model -> Html Msg
 view model =
     svg
-        [ Attributes.viewBox "0 0 1100 1100"
+        [ Attributes.viewBox <|
+            "0 0 "
+                ++ (toString <| model.width + 100)
+                ++ " "
+                ++ (toString <| model.height + 100)
         , Attributes.preserveAspectRatio "xMidYMid meet"
         , Attributes.height "100%"
         , Attributes.width "100%"
@@ -31,7 +41,7 @@ view model =
         ]
         [ g
             [ Attributes.transform "translate(50,50)" ]
-            [ line 0 0 1000 0
+            [ line 0 0 model.width 0
             ]
         ]
 
