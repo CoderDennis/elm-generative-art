@@ -13,3 +13,18 @@ line x1 y1 x2 y2 =
         , Attributes.y2 <| toString y2
         ]
         []
+
+
+circle : Float -> Float -> Float -> Svg a
+circle x y r =
+    Svg.circle
+        [ Attributes.cx <| toString x
+        , Attributes.cy <| toString y
+        , Attributes.r <| toString r
+        ]
+        []
+
+
+translate : Float -> Float -> Svg.Attribute a
+translate x y =
+    Attributes.transform <| " translate(" ++ toString x ++ "," ++ toString y ++ ") "

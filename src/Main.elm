@@ -3,12 +3,14 @@ module Main exposing (..)
 import Html exposing (Html)
 import Svg exposing (Svg, svg, g)
 import Svg.Attributes as Attributes
-import Draw exposing (..)
+import Grid exposing (..)
+import Draw exposing (circle)
 
 
 type alias Model =
     { width : Float
     , height : Float
+    , grid : Grid
     }
 
 
@@ -18,11 +20,25 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    ( { width = 1000
-      , height = 1000
-      }
-    , Cmd.none
-    )
+    let
+        width =
+            1600
+
+        height =
+            900
+
+        segmentLength =
+            50
+
+        grid =
+            makeGrid (floor <| width / segmentLength) (floor <| height / segmentLength) segmentLength
+    in
+        ( { width = width
+          , height = height
+          , grid = grid
+          }
+        , Cmd.none
+        )
 
 
 view : Model -> Html Msg
@@ -36,12 +52,15 @@ view model =
         , Attributes.preserveAspectRatio "xMidYMid meet"
         , Attributes.height "100%"
         , Attributes.width "100%"
-        , Attributes.strokeWidth "1"
         , Attributes.stroke "black"
+        , Attributes.strokeLinecap "round"
+        , Attributes.strokeLinejoin "round"
+        , Attributes.strokeWidth "5"
         ]
         [ g
             [ Attributes.transform "translate(50,50)" ]
-            [ line 0 0 model.width 0
+            [ (circle 25 25 5)
+                |> drawInGrid model.grid
             ]
         ]
 
