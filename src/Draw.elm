@@ -11,6 +11,9 @@ line x1 y1 x2 y2 =
         , Attributes.y1 <| toString y1
         , Attributes.x2 <| toString x2
         , Attributes.y2 <| toString y2
+        , Attributes.strokeLinecap "round"
+        , Attributes.strokeLinejoin "round"
+        , Attributes.strokeWidth "5"
         ]
         []
 
@@ -21,10 +24,23 @@ circle x y r =
         [ Attributes.cx <| toString x
         , Attributes.cy <| toString y
         , Attributes.r <| toString r
+        , Attributes.strokeWidth "0"
+        ]
+        []
+
+
+rect : Float -> Float -> Float -> Float -> Svg a
+rect x y width height =
+    Svg.rect
+        [ Attributes.x <| toString x
+        , Attributes.y <| toString y
+        , Attributes.width <| toString width
+        , Attributes.height <| toString height
+        , Attributes.strokeWidth "0"
         ]
         []
 
 
 translate : Float -> Float -> Svg.Attribute a
 translate x y =
-    Attributes.transform <| " translate(" ++ toString x ++ "," ++ toString y ++ ") "
+    Attributes.transform <| "translate(" ++ toString x ++ "," ++ toString y ++ ")"

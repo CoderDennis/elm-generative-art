@@ -4,13 +4,14 @@ import Html exposing (Html)
 import Svg exposing (Svg, svg, g)
 import Svg.Attributes as Attributes
 import Grid exposing (..)
-import Draw exposing (circle)
+import Draw exposing (..)
 
 
 type alias Model =
     { width : Float
     , height : Float
     , grid : Grid
+    , shape : Svg Msg
     }
 
 
@@ -36,6 +37,7 @@ init =
         ( { width = width
           , height = height
           , grid = grid
+          , shape = circle 25 25 5
           }
         , Cmd.none
         )
@@ -48,18 +50,15 @@ view model =
             "0 0 "
                 ++ (toString <| model.width + 100)
                 ++ " "
-                ++ (toString <| model.height + 100)
+                ++ (toString <| model.height + 200)
         , Attributes.preserveAspectRatio "xMidYMid meet"
         , Attributes.height "100%"
         , Attributes.width "100%"
         , Attributes.stroke "black"
-        , Attributes.strokeLinecap "round"
-        , Attributes.strokeLinejoin "round"
-        , Attributes.strokeWidth "5"
         ]
         [ g
-            [ Attributes.transform "translate(50,50)" ]
-            [ (circle 25 25 5)
+            [ Attributes.transform "translate(50,150)" ]
+            [ (model.shape)
                 |> drawInGrid model.grid
             ]
         ]
