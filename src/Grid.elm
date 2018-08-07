@@ -17,18 +17,24 @@ type alias Point =
 
 type alias Grid =
     { points : List Point
-    , segmentLength : Int
+    , segmentLength : Float
     }
 
 
-makeGrid : Int -> Int -> Int -> Grid
+makeGrid : Float -> Float -> Float -> Grid
 makeGrid width height segmentLength =
     let
+        segmentsWide =
+            floor <| width / segmentLength
+
+        segmentsHigh =
+            floor <| height / segmentLength
+
         xs =
-            List.range 0 (width - 1)
+            List.range 0 (segmentsWide - 1)
 
         ys =
-            List.range 0 (height - 1)
+            List.range 0 (segmentsHigh - 1)
     in
         { points = cartesian xs ys
         , segmentLength = segmentLength
@@ -50,8 +56,8 @@ drawInGrid grid thing =
         )
 
 
-placeAtPoint : Int -> Svg a -> Point -> Svg a
+placeAtPoint : Float -> Svg a -> Point -> Svg a
 placeAtPoint segmentLength thing ( x, y ) =
     g
-        [ translate (toFloat <| x * segmentLength) (toFloat <| y * segmentLength) ]
+        [ translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength) ]
         [ thing ]

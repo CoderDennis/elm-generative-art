@@ -31,7 +31,7 @@ init =
             50
 
         grid =
-            makeGrid (floor <| width / segmentLength) (floor <| height / segmentLength) segmentLength
+            makeGrid width height segmentLength
     in
         ( { width = width
           , height = height
