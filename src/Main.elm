@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Events exposing (onClick, onInput)
@@ -149,7 +149,7 @@ update msg model =
     case msg of
         CircleMsg r ->
             ( { model
-                | shape = circle 25 25 (mapInput r)
+                | shape = circle 25 25 (inputToFloat r)
                 , shapeEdit = Circle r
               }
             , Cmd.none
@@ -157,7 +157,7 @@ update msg model =
 
         RectangleMsg width height ->
             ( { model
-                | shape = rect 0 0 (mapInput width) (mapInput height)
+                | shape = rect 0 0 (inputToFloat width) (inputToFloat height)
                 , shapeEdit = Rectangle width height
               }
             , Cmd.none
@@ -165,15 +165,15 @@ update msg model =
 
         LineMsg x2 y2 ->
             ( { model
-                | shape = line 0 0 (mapInput x2) (mapInput y2)
+                | shape = line 0 0 (inputToFloat x2) (inputToFloat y2)
                 , shapeEdit = Line x2 y2
               }
             , Cmd.none
             )
 
 
-mapInput : String -> Float
-mapInput value =
+inputToFloat : String -> Float
+inputToFloat value =
     Result.withDefault 0 (String.toFloat value)
 
 
