@@ -1,14 +1,16 @@
 module Grid
     exposing
         ( Grid
-        , makeGrid
-        , drawInGrid
+        , init
+        , draw
+        , pointCount
         )
 
 import List
 import Svg exposing (Svg, g)
 import Svg.Attributes as Attributes
 import Draw exposing (translate)
+import List.Extra exposing (zip)
 
 
 type alias Point =
@@ -21,8 +23,13 @@ type alias Grid =
     }
 
 
-makeGrid : Float -> Float -> Float -> Grid
-makeGrid width height segmentLength =
+pointCount : Grid -> Int
+pointCount grid =
+    List.length grid.points
+
+
+init : Float -> Float -> Float -> Grid
+init width height segmentLength =
     let
         segmentsWide =
             floor <| width / segmentLength
@@ -48,16 +55,22 @@ cartesian xs ys =
         xs
 
 
-drawInGrid : Grid -> Svg a -> Svg a
-drawInGrid grid thing =
-    g []
-        (grid.points
-            |> List.map (placeAtPoint grid.segmentLength thing)
-        )
+draw : Grid -> List (Svg.Attribute a) -> Svg a -> Svg a
+draw grid attrs thing =
+    let
+        l =
+            zip grid.points attrs
+    in
+        g []
+            (l
+                |> List.map (placeAtPoint grid.segmentLength thing)
+            )
 
 
-placeAtPoint : Float -> Svg a -> Point -> Svg a
-placeAtPoint segmentLength thing ( x, y ) =
+placeAtPoint : Float -> Svg a -> ( Point, Svg.Attribute a ) -> Svg a
+placeAtPoint segmentLength thing ( ( x, y ), attr ) =
     g
-        [ translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength) ]
+        [ translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength)
+        , attr
+        ]
         [ thing ]

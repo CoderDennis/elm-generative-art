@@ -2,6 +2,8 @@ module Draw exposing (..)
 
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
+import Color exposing (Color)
+import Color.Convert exposing (colorToHex)
 
 
 line : Float -> Float -> Float -> Float -> Svg a
@@ -44,3 +46,12 @@ rect x y width height =
 translate : Float -> Float -> Svg.Attribute a
 translate x y =
     Attributes.transform <| "translate(" ++ toString x ++ "," ++ toString y ++ ")"
+
+
+mapColors : List Color -> List (Svg.Attribute a)
+mapColors colors =
+    let
+        colorToAttr c =
+            Attributes.fill <| colorToHex c
+    in
+        List.map colorToAttr colors

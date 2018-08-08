@@ -5,8 +5,11 @@ import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (value)
 import Svg exposing (Svg, svg, g)
 import Svg.Attributes as Attributes
-import Grid exposing (..)
+import Grid exposing (Grid)
 import Draw exposing (..)
+import DistinctColors.HSLuv exposing (randomColor)
+import Color exposing (Color)
+import Random.Pcg as Random
 
 
 type alias Model =
@@ -15,6 +18,7 @@ type alias Model =
     , grid : Grid
     , shape : Svg Msg
     , shapeEdit : ShapeEdit
+    , colors : List Color
     }
 
 
@@ -22,6 +26,7 @@ type Msg
     = CircleMsg String
     | RectangleMsg String String
     | LineMsg String String
+    | Colors (List Color)
 
 
 type ShapeEdit
@@ -43,15 +48,22 @@ init =
             50
 
         grid =
-            makeGrid width height segmentLength
+            Grid.init width height segmentLength
+
+        colorOptions =
+            { saturation = 1.0
+            , lightness = 0.7
+            , alpha = 1.0
+            }
     in
         ( { width = width
           , height = height
           , grid = grid
-          , shape = circle 25 25 5
-          , shapeEdit = Circle "5"
+          , shape = circle 25 25 20
+          , shapeEdit = Circle "20"
+          , colors = []
           }
-        , Cmd.none
+        , Random.generate Colors <| Random.list (Grid.pointCount grid) (randomColor colorOptions)
         )
 
 
@@ -73,7 +85,7 @@ view model =
             [ g
                 [ Attributes.transform "translate(50,50)" ]
                 [ (model.shape)
-                    |> drawInGrid model.grid
+                    |> Grid.draw model.grid (mapColors model.colors)
                 ]
             ]
         ]
@@ -170,6 +182,9 @@ update msg model =
               }
             , Cmd.none
             )
+
+        Colors cs ->
+            ( { model | colors = cs }, Cmd.none )
 
 
 inputToFloat : String -> Float
