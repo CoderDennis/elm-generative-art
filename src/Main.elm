@@ -19,6 +19,7 @@ type alias Model =
     , shape : Svg Msg
     , shapeEdit : ShapeEdit
     , colors : List Color
+    , degrees : List Float
     }
 
 
@@ -27,6 +28,7 @@ type Msg
     | RectangleMsg String String
     | LineMsg String String
     | Colors (List Color)
+    | Degrees (List Float)
 
 
 type ShapeEdit
@@ -55,40 +57,51 @@ init =
             , lightness = 0.7
             , alpha = 1.0
             }
+
+        pointCount =
+            Grid.pointCount grid
     in
         ( { width = width
           , height = height
           , grid = grid
-          , shape = circle 25 25 20
-          , shapeEdit = Circle "20"
+          , shape = line 0 0 50 50
+          , shapeEdit = Line "50" "50"
           , colors = []
+          , degrees = []
           }
-        , Random.generate Colors <| Random.list (Grid.pointCount grid) (randomColor colorOptions)
+        , Cmd.batch
+            [ Random.generate Colors <| Random.list pointCount (randomColor colorOptions)
+            , Random.generate Degrees <| Random.list pointCount (Random.float 0 360)
+            ]
         )
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ viewShapeEdit model.shapeEdit
-        , svg
-            [ Attributes.viewBox <|
-                "0 0 "
-                    ++ (toString <| model.width + 100)
-                    ++ " "
-                    ++ (toString <| model.height + 100)
-            , Attributes.preserveAspectRatio "xMidYMid meet"
-            , Attributes.height "100%"
-            , Attributes.width "100%"
-            , Attributes.stroke "black"
-            ]
-            [ g
-                [ Attributes.transform "translate(50,50)" ]
-                [ (model.shape)
-                    |> Grid.draw model.grid (mapColors model.colors)
+    let
+        transforms =
+            List.map (rotate model.grid.segmentLength) model.degrees
+    in
+        div []
+            [ viewShapeEdit model.shapeEdit
+            , svg
+                [ Attributes.viewBox <|
+                    "0 0 "
+                        ++ (toString <| model.width + 100)
+                        ++ " "
+                        ++ (toString <| model.height + 100)
+                , Attributes.preserveAspectRatio "xMidYMid meet"
+                , Attributes.height "100%"
+                , Attributes.width "100%"
+                , Attributes.stroke "black"
+                ]
+                [ g
+                    [ Attributes.transform "translate(50,50)" ]
+                    [ (model.shape)
+                        |> Grid.draw model.grid (mapColors model.colors) transforms
+                    ]
                 ]
             ]
-        ]
 
 
 viewShapeEdit : ShapeEdit -> Html Msg
@@ -185,6 +198,9 @@ update msg model =
 
         Colors cs ->
             ( { model | colors = cs }, Cmd.none )
+
+        Degrees ns ->
+            ( { model | degrees = ns }, Cmd.none )
 
 
 inputToFloat : String -> Float

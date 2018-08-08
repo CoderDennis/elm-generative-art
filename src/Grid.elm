@@ -9,7 +9,7 @@ module Grid
 import List
 import Svg exposing (Svg, g)
 import Svg.Attributes as Attributes
-import Draw exposing (translate)
+import Draw exposing (translate, transform, zipCycle3)
 import List.Extra exposing (zip)
 
 
@@ -55,11 +55,11 @@ cartesian xs ys =
         xs
 
 
-draw : Grid -> List (List (Svg.Attribute a)) -> Svg a -> Svg a
-draw grid attrs thing =
+draw : Grid -> List (List (Svg.Attribute a)) -> List String -> Svg a -> Svg a
+draw grid attrs transforms thing =
     let
         l =
-            zip grid.points attrs
+            zipCycle3 grid.points attrs transforms
     in
         g []
             (l
@@ -67,10 +67,14 @@ draw grid attrs thing =
             )
 
 
-placeAtPoint : Float -> Svg a -> ( Point, List (Svg.Attribute a) ) -> Svg a
-placeAtPoint segmentLength thing ( ( x, y ), attrs ) =
+placeAtPoint : Float -> Svg a -> ( Point, List (Svg.Attribute a), String ) -> Svg a
+placeAtPoint segmentLength thing ( ( x, y ), attrs, transforms ) =
     g
-        ((translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength))
+        ((transform
+            [ translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength)
+            , transforms
+            ]
+         )
             :: attrs
         )
         [ thing ]
