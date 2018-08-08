@@ -48,10 +48,10 @@ translate x y =
     Attributes.transform <| "translate(" ++ toString x ++ "," ++ toString y ++ ")"
 
 
-mapColors : List Color -> List (Svg.Attribute a)
+mapColors : List Color -> List (List (Svg.Attribute a))
 mapColors colors =
     let
         colorToAttr c =
-            Attributes.fill <| colorToHex c
+            [ Attributes.fill <| colorToHex c ]
     in
         List.map colorToAttr colors

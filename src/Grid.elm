@@ -55,7 +55,7 @@ cartesian xs ys =
         xs
 
 
-draw : Grid -> List (Svg.Attribute a) -> Svg a -> Svg a
+draw : Grid -> List (List (Svg.Attribute a)) -> Svg a -> Svg a
 draw grid attrs thing =
     let
         l =
@@ -67,10 +67,10 @@ draw grid attrs thing =
             )
 
 
-placeAtPoint : Float -> Svg a -> ( Point, Svg.Attribute a ) -> Svg a
-placeAtPoint segmentLength thing ( ( x, y ), attr ) =
+placeAtPoint : Float -> Svg a -> ( Point, List (Svg.Attribute a) ) -> Svg a
+placeAtPoint segmentLength thing ( ( x, y ), attrs ) =
     g
-        [ translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength)
-        , attr
-        ]
+        ((translate ((toFloat x) * segmentLength) ((toFloat y) * segmentLength))
+            :: attrs
+        )
         [ thing ]
